@@ -1,125 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        @import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: #e0e0e0;
-            font-family: "Roboto", sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-page {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-        }
-
-        .form {
-            background: #FFFFFF;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .form input {
-            font-family: "Roboto", sans-serif;
-            background: #f2f2f2;
-            width: 100%;
-            border: 0;
-            margin: 10px 0;
-            padding: 15px;
-            font-size: 14px;
-            border-radius: 5px;
-        }
-
-        .form button {
-            font-family: "Roboto", sans-serif;
-            text-transform: uppercase;
-            background: #4CAF50;
-            width: 100%;
-            border: 0;
-            padding: 15px;
-            color: #FFFFFF;
-            font-size: 14px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .form button:hover {
-            background: #43A047;
-        }
-
-        #result-container {
-            margin-top: 15px;
-            color: red;
-        }
-
-        /* The iframe (website area) */
-        iframe {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: none;
-            z-index: 999;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notepad </title>
+<style>
+:root{
+  --bg: #0b0c0f;
+  --panel:#11131a;
+  --card:#151826;
+  --text:#e6e8ef;
+  --muted:#a9b0c2;
+  --accent:#2d6cdf;
+  --border:#262a3a;
+}
+.light{
+  --bg:#f7f8fb;
+  --panel:#ffffff;
+  --card:#ffffff;
+  --text:#0f1222;
+  --muted:#5a6275;
+  --accent:#2d6cdf;
+  --border:#e6e8ef;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+}
+.app{display:grid;grid-template-columns:280px 1fr;height:100vh}
+.sidebar{border-right:1px solid var(--border);background:var(--panel);display:flex;flex-direction:column;gap:8px}
+.topbar{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--border);background:var(--panel)}
+.search{flex:1;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 10px}
+.search input{border:0;outline:0;background:transparent;color:var(--text);width:100%}
+.btn,.chip{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.pages{flex:1;overflow:auto;padding:8px}
+.page-item{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid transparent;cursor:pointer;user-select:none}
+.page-item:hover{background:var(--card)}
+.page-item.active{border-color:var(--accent);background:linear-gradient(0deg, rgba(45,108,223,.10), rgba(45,108,223,.10))}
+.page-item .star{margin-left:auto;color:var(--muted);cursor:pointer}
+.page-item .star.active{color:gold}
+.editor{height:calc(100vh - 48px);overflow:auto;padding:24px 40px}
+.title{font-size:28px;font-weight:600;margin:4px 0 12px 0;border:0;outline:0;background:transparent;color:var(--text);width:100%}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.block{display:flex;align-items:flex-start;gap:8px;padding:6px;border-radius:8px;position:relative}
+.block:hover{background:var(--card)}
+.drag{cursor:grab;color:var(--muted);padding:6px;user-select:none}
+.content[contenteditable="true"]{outline:0;min-height:20px;width:100%}
+.h1{font-size:22px;font-weight:700;margin:6px 0}
+.h2{font-size:18px;font-weight:700;margin:6px 0}
+.h3{font-size:16px;font-weight:600;margin:6px 0}
+.text{font-size:14px}
+.check{display:flex;align-items:center;gap:8px}
+.check input{accent-color:var(--accent)}
+.quote{border-left:3px solid var(--border);padding-left:10px;color:var(--muted);font-style:italic}
+.divider{border-top:1px dashed var(--border);margin:8px 0;min-height:1px}
+.callout{background:rgba(45,108,223,.08);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:2px 6px;color:var(--muted)}
+.footer{padding:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;color:var(--muted);gap:8px}
+.badge{padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--card);color:var(--muted);font-size:12px}
+#ctxMenu,#blkMenu{position:fixed;z-index:1000;min-width:160px;background:var(--panel);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);padding:6px;display:none}
+#ctxMenu .ctxbtn,#blkMenu .ctxbtn{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:6px;margin:4px 0;cursor:pointer}
+#ctxMenu .ctxbtn:hover,#blkMenu .ctxbtn:hover{background:rgba(255,255,255,.06)}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;inset:48px 0 0 0;transform:translateX(-100%);transition:.2s;z-index:5}
+  .sidebar.open{transform:none}
+}
+</style>
 </head>
-<body>
-    <div class="login-page" id="login-section">
-        <div class="form">
-            <form onsubmit="return validateLogin()">
-                <input type="text" id="username" placeholder="Username" />
-                <input type="password" id="password" placeholder="Password" />
-                <button type="submit">Login</button>
-            </form>
-            <div id="result-container"></div>
+<body class="light">
+  <div class="topbar">
+    <button id="menuBtn" class="btn" title="Toggle menu">☰</button>
+    <div class="search"><span>🔎</span><input id="search" placeholder="Search pages..." /></div>
+    <button id="themeBtn" class="btn" title="Toggle theme">🌙</button>
+    <button id="newBtn" class="btn primary" title="New page">+ New Page</button>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div style="padding:10px;display:flex;gap:8px">
+        <button id="newPageSide" class="btn primary" title="Create page">+ New</button>
+        <button id="starFilter" class="btn" title="Show favorites">★ Starred</button>
+      </div>
+      <div class="pages" id="pages"></div>
+      <div class="footer">
+        <span id="count">0 pages</span>
+        <span class="badge" id="statusBadge" style="display:none">Storage issue</span>
+        <span>Notepad</span>
+      </div>
+    </aside>
+
+    <main>
+      <div class="editor" id="editor" aria-live="polite">
+        <input class="title" id="title" placeholder="Untitled" />
+        <div class="toolbar">
+          <button class="btn chip" data-block="h1">H1</button>
+          <button class="btn chip" data-block="h2">H2</button>
+          <button class="btn chip" data-block="h3">H3</button>
+          <button class="btn chip" data-block="text">Text</button>
+          <button class="btn chip" data-block="check">Checklist</button>
+          <button class="btn chip" data-block="quote">Quote</button>
+          <button class="btn chip" data-block="divider">Divider</button>
+          <span class="kbd">/</span><span class="muted"> for command menu</span>
         </div>
-    </div>
+        <div id="blocks"></div>
+      </div>
+    </main>
+  </div>
 
-    <iframe id="webframe"></iframe>
+  <div id="ctxMenu" role="menu" aria-hidden="true"></div>
+  <div id="blkMenu" role="menu" aria-hidden="true"></div>
 
-    <script>
-        function validateLogin() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const result = document.getElementById('result-container');
-            const iframe = document.getElementById('webframe');
-            const loginSection = document.getElementById('login-section');
+<script>
+// Silent storage helpers
+function isQuotaErr(err){return err && ((err.name&& (err.name==="QuotaExceededError"||err.name==="NS_ERROR_DOM_QUOTA_REACHED"))||(err.code===22||err.code===1014))}
+function storageSupported(){try{const x="__t__";localStorage.setItem(x,x);localStorage.removeItem(x);return true;}catch(err){return isQuotaErr(err)&&localStorage.length>0}}
+const LS_KEY="notepad_pages_v1";const statusBadge=document.getElementById("statusBadge");let storageOK=storageSupported();
+function showStatus(on){statusBadge.style.display=on?"inline-block":"none"}
 
-            const correctUsername = "Admin";
-            const correctPassword = "web@123";
+// Load or seed pages
+let pages=[];try{pages=JSON.parse(localStorage.getItem(LS_KEY)||"[]")}catch(e){pages=[]}
+let currentId=null;
+const pagesEl=document.getElementById("pages"),blocksEl=document.getElementById("blocks"),titleEl=document.getElementById("title"),countEl=document.getElementById("count"),searchEl=document.getElementById("search"),sidebarEl=document.getElementById("sidebar");
+const pageMenu=document.getElementById("ctxMenu"),blockMenu=document.getElementById("blkMenu");
 
-            if (username === correctUsername && password === correctPassword) {
-                // Hide login and show full responsive website
-                loginSection.style.display = 'none';
-                iframe.style.display = 'block';
-                iframe.src = "https://ww1.lat/netmirror/";
-            } else {
-                result.innerHTML = "❌ Incorrect Username or Password";
-            }
+function uid(){return Math.random().toString(36).slice(2,9)}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(pages));countEl.textContent=pages.length+" pages";showStatus(false)}catch(e){if(isQuotaErr(e)||!storageOK){showStatus(true)}}}
+let filterStar=false;
 
-            return false;
-        }
-    </script>
+// DEFAULT WELCOME CONTENT — loaded only when storage is empty
+function seedWelcomePage(){
+  const welcomeTitle="Hello Welcome To The Notepad";
+  const blocks=[
+    {id:uid(),type:"h1",text:"Hello Welcome To The Notepad"},
+    {id:uid(),type:"text",text:"Welcome to Notepad, a simple, offline, workspace where you can create pages, write with clean blocks like headings and checklists, and everything auto‑saves in your browser for a smooth, distraction‑free experience."},
+    {id:uid(),type:"h2",text:"What You Can Do"},
+    {id:uid(),type:"callout",text:""}, // rendered as callout div below
+    {id:uid(),type:"text",text:"• Create, rename, duplicate, and delete pages from the sidebar to organize school notes, ideas, and projects quickly."},
+    {id:uid(),type:"text",text:"• Write using headings, text, quotes, dividers, and checklists, then right‑click blocks to remove what you don’t need for a tidy document flow."},
+    {id:uid(),type:"text",text:"• Drag the ⋮⋮ handle to reorder blocks and use search to find pages instantly as your notebook grows over time."},
+    {id:uid(),type:"text",text:"• Enjoy light/dark themes and persistent storage with no signup, powered by your browser’s localStorage so your notes stay on your device."}
+  ];
+  // convert bullet texts into a single callout section layout: one callout containing bullets visually
+  return {
+    id:uid(),title:welcomeTitle,star:false,updated:Date.now(),
+    blocks:blocks
+  };
+}
+
+function renderPages(){
+  const q=(searchEl.value||"").toLowerCase();pagesEl.innerHTML="";
+  pages.filter(p=>!filterStar||p.star).filter(p=>p.title.toLowerCase().includes(q)).sort((a,b)=>(b.star-a.star)||(b.updated-a.updated)).forEach(p=>{
+    const item=document.createElement("div");item.className="page-item"+(p.id===currentId?" active":"");
+    item.innerHTML=`<span>🗒️</span><span>${p.title||"Untitled"}</span><span class="star ${p.star?"active":""}" title="Toggle star">★</span>`;
+    item.addEventListener("click",()=>{openPage(p.id);if(window.innerWidth<900){sidebarEl.classList.remove("open")}});item.querySelector(".star").addEventListener("click",(e)=>{e.stopPropagation();p.star=!p.star;p.updated=Date.now();save();renderPages()});
+    item.addEventListener("contextmenu",(e)=>{e.preventDefault();openPageMenu(e.clientX,e.clientY,p.id)});
+    pagesEl.appendChild(item);
+  });
+}
+
+function positionMenu(el,x,y){const w=200,h=150,vw=window.innerWidth,vh=window.innerHeight;el.style.left=Math.min(x,vw-w-8)+"px";el.style.top=Math.min(y,vh-h-8)+"px";el.style.display="block";el.setAttribute("aria-hidden","false")}
+function closeMenus(){pageMenu.style.display="none";pageMenu.setAttribute("aria-hidden","true");blockMenu.style.display="none";blockMenu.setAttribute("aria-hidden","true")}
+document.addEventListener("click",(e)=>{if(!e.target.closest("#ctxMenu")&&!e.target.closest("#blkMenu")) closeMenus()});window.addEventListener("keydown",(e)=>{if(e.key==="Escape") closeMenus()});
+
+function openPageMenu(x,y,pid){
+  pageMenu.innerHTML=`<button class="ctxbtn" data-act="rename">✏️ Edit title</button><button class="ctxbtn" data-act="duplicate">📄 Duplicate</button><button class="ctxbtn" data-act="delete" style="color:#e74c3c">🗑️ Delete</button>`;
+  [...pageMenu.querySelectorAll(".ctxbtn")].forEach(b=>{b.onclick=()=>{handlePageMenu(b.dataset.act,pid);closeMenus()}})
+  positionMenu(pageMenu,x,y);
+}
+function handlePageMenu(act,pid){
+  const idx=pages.findIndex(p=>p.id===pid);if(idx===-1) return;
+  if(act==="rename"){const t=prompt("Enter new title:",pages[idx].title||"Untitled");if(t!=null){pages[idx].title=t.trim();pages[idx].updated=Date.now();save();renderPages();if(pid===currentId){titleEl.value=pages[idx].title}}}
+  else if(act==="duplicate"){const copy=JSON.parse(JSON.stringify(pages[idx]));copy.id=uid();copy.title=(copy.title||"Untitled")+" (Copy)";copy.updated=Date.now();pages.unshift(copy);save();openPage(copy.id)}
+  else if(act==="delete"){const was=pages[idx].id===currentId;pages.splice(idx,1);save();if(was){if(pages.length){openPage(pages[0].id)}else{createPage()}}else{renderPages()}}
+}
+
+function blockTpl(block){
+  const row=document.createElement("div");row.className="block";row.dataset.id=block.id;row.innerHTML=`<div class="drag" title="Drag">⋮⋮</div><div class="content"></div>`;
+  const c=row.querySelector(".content");
+  if(block.type==="divider"){c.innerHTML='<div class="divider" aria-hidden="true"></div>'}
+  else if(block.type==="check"){c.innerHTML=`<label class="check"><input type="checkbox" ${block.checked?"checked":""}/><div contenteditable="true" class="text">${block.text||""}</div></label>`}
+  else if(block.type==="quote"){c.innerHTML=`<div contenteditable="true" class="quote">${block.text||"Quote"}</div>`}
+  else if(block.type==="h1"||block.type==="h2"||block.type==="h3"){c.innerHTML=`<div contenteditable="true" class="${block.type}">${block.text||block.type.toUpperCase()}</div>`}
+  else if(block.type==="callout"){c.innerHTML=`<div class="callout text">What You Can Do</div>`}
+  else{c.innerHTML=`<div contenteditable="true" class="text">${block.text||"Type something..."}</div>`}
+
+  // Block right‑click: only Delete
+  row.addEventListener("contextmenu",(e)=>{e.preventDefault();openBlockMenu(e.clientX,e.clientY,block.id)});
+  function openBlockMenu(x,y,bid){
+    blockMenu.innerHTML=`<button class="ctxbtn" data-act="delete" style="color:#e74c3c">🗑️ Delete</button>`;
+    [...blockMenu.querySelectorAll(".ctxbtn")].forEach(b=>{b.onclick=()=>{handleBlockDelete(bid);closeMenus()}});
+    const w=180,h=80,vw=window.innerWidth,vh=window.innerHeight;blockMenu.style.left=Math.min(x,vw-w-8)+"px";blockMenu.style.top=Math.min(y,vh-h-8)+"px";blockMenu.style.display="block";blockMenu.setAttribute("aria-hidden","false");
+  }
+  function handleBlockDelete(bid){
+    const page=pages.find(p=>p.id===currentId);if(!page) return;
+    const idx=page.blocks.findIndex(b=>b.id===bid);if(idx===-1) return;
+    page.blocks.splice(idx,1);touchPage();renderBlocks();
+  }
+
+  // Save edits
+  if(block.type==="check"){const input=c.querySelector("input");const t=c.querySelector("div[contenteditable]");t&&t.addEventListener("input",()=>{block.text=t.innerText;touchPage()});input&&input.addEventListener("change",()=>{block.checked=input.checked;touchPage()})}
+  else if(block.type!=="divider"&&block.type!=="callout"){const t=c.querySelector("[contenteditable]");t&&t.addEventListener("input",()=>{block.text=t.innerText;touchPage()})}
+
+  // Slash menu
+  c.addEventListener("keydown",(e)=>{if(e.key==="/"&&!e.shiftKey){e.preventDefault();openSlashMenu(c,block)}});
+  function openSlashMenu(target,block){
+    const menu=document.createElement("div");menu.style.position="absolute";menu.style.zIndex=10;
+    const r=target.getBoundingClientRect();menu.style.left=r.left+"px";menu.style.top=(r.bottom+6)+"px";menu.className="btn";
+    menu.textContent="Heading 1 | Heading 2 | Heading 3 | Text | Checklist | Quote | Divider";
+    document.body.appendChild(menu);
+    function set(type){block.type=type;if(type==="divider"){block.text="";block.checked=undefined}renderBlocks();touchPage();close()}
+    menu.addEventListener("click",(e)=>{const t=e.target.textContent.toLowerCase();if(t.includes("heading 1"))set("h1");else if(t.includes("heading 2"))set("h2");else if(t.includes("heading 3"))set("h3");else if(t.includes("text"))set("text");else if(t.includes("checklist"))set("check");else if(t.includes("quote"))set("quote");else if(t.includes("divider"))set("divider")});
+    function close(){menu.parentNode&&document.body.removeChild(menu)}setTimeout(()=>document.addEventListener("click",close,{once:true}),0);
+  }
+
+  // Drag via handle only
+  const handle=row.querySelector(".drag");row.draggable=false;
+  handle.addEventListener("mousedown",()=>{row.draggable=true});handle.addEventListener("mouseup",()=>{setTimeout(()=>row.draggable=false,0)});
+  row.addEventListener("dragstart",(e)=>{if(e.target!==handle){e.preventDefault();return}row.classList.add("dragging");e.dataTransfer.effectAllowed="move"});
+  row.addEventListener("dragend",()=>row.classList.remove("dragging"));
+  return row;
+}
+
+function getDragAfterElement(container,y){
+  const els=[...container.querySelectorAll(".block:not(.dragging)")];
+  let closest={offset:Number.NEGATIVE_INFINITY,element:null};
+  els.forEach(child=>{const box=child.getBoundingClientRect();const offset=y-box.top-box.height/2;if(offset<0&&offset>closest.offset){closest={offset,element:child}}});
+  return closest.element;
+}
+function renderBlocks(){
+  blocksEl.innerHTML="";const page=pages.find(p=>p.id===currentId);if(!page) return;
+  page.blocks.forEach(b=>blocksEl.appendChild(blockTpl(b)));
+  blocksEl.ondragover=(e)=>{e.preventDefault();const dragging=blocksEl.querySelector(".block.dragging");if(!dragging) return;const after=getDragAfterElement(blocksEl,e.clientY);if(after==null){blocksEl.appendChild(dragging)}else{blocksEl.insertBefore(dragging,after)}};
+  blocksEl.ondrop=()=>{const ids=[...blocksEl.querySelectorAll(".block")].map(el=>el.dataset.id);const page=pages.find(p=>p.id===currentId);if(!page) return;page.blocks.sort((a,b)=>ids.indexOf(a.id)-ids.indexOf(b.id));touchPage()};
+}
+
+function renderAll(){renderPages();renderBlocks()}
+function openPage(id){currentId=id;const p=pages.find(x=>x.id===id);titleEl.value=p?.title||"";renderAll()}
+function createPage(){
+  // Default seed for new pages (simple empty starter)
+  const p={id:uid(),title:"Untitled",star:false,updated:Date.now(),blocks:[{id:uid(),type:"h1",text:"Untitled"},{id:uid(),type:"text",text:"Type ‘/’ to change block type."}]};
+  pages.unshift(p);save();openPage(p.id);
+}
+function touchPage(){const page=pages.find(p=>p.id===currentId);if(!page) return;page.updated=Date.now();save()}
+
+function init(){
+  const preferLight=localStorage.getItem("theme_light");if(preferLight==="false"){document.body.classList.remove("light")}else if(preferLight==="true"){document.body.classList.add("light")}
+  if(pages.length===0){const seed=seedWelcomePage();pages=[seed];save();openPage(seed.id)}else{openPage(pages[0].id)}
+  renderPages();
+}
+
+// UI wires
+document.getElementById("newBtn").onclick=createPage;
+document.getElementById("newPageSide").onclick=createPage;
+document.getElementById("starFilter").onclick=()=>{filterStar=!filterStar;renderPages()};
+document.getElementById("menuBtn").onclick=()=>sidebarEl.classList.toggle("open");
+document.getElementById("themeBtn").onclick=()=>{const isLight=!document.body.classList.contains("light");document.body.classList.toggle("light");localStorage.setItem("theme_light",isLight)};
+titleEl.addEventListener("input",()=>{const p=pages.find(x=>x.id===currentId);if(!p) return;p.title=titleEl.value;touchPage();renderPages()});
+searchEl.addEventListener("input",renderPages);
+// Restrict native context menus where custom ones exist
+document.addEventListener("contextmenu",(e)=>{if(e.target.closest(".page-item")||e.target.closest(".block")) e.preventDefault()});
+// Toolbar add block
+document.querySelectorAll(".toolbar .chip").forEach(btn=>{
+  btn.addEventListener("click",()=>{const page=pages.find(p=>p.id===currentId);if(!page) return;const type=btn.dataset.block;const block={id:uid(),type,text:type==="divider"?"":"New "+type};if(type==="check") block.checked=false;page.blocks.push(block);touchPage();renderBlocks();const last=blocksEl.querySelector('.block:last-child [contenteditable="true"]');if(last){last.focus();}});
+});
+
+init();
+</script>
 </body>
 </html>
 
